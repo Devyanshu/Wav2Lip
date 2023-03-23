@@ -169,9 +169,9 @@ def load_model(path):
 	model = Wav2Lip()
 	print("Load checkpoint from: {}".format(path))
 	checkpoint = _load(path)
-	s = checkpoint["state_dict"]
+	# s = checkpoint["state_dict"]
 	new_s = {}
-	for k, v in s.items():
+	for k, v in checkpoint.items():
 		new_s[k.replace('module.', '')] = v
 	model.load_state_dict(new_s)
 
@@ -260,7 +260,7 @@ def main():
 	for i, (img_batch, mel_batch, frames, coords) in enumerate(tqdm(gen, 
 											total=int(np.ceil(float(len(mel_chunks))/batch_size)))):
 		if i == 0:
-			model = load_model_in_cpu(args.checkpoint_path)
+			model = load_model(args.checkpoint_path)
 			print ("Model loaded")
 
 			frame_h, frame_w = full_frames[0].shape[:-1]
