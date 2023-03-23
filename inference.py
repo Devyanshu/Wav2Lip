@@ -178,6 +178,17 @@ def load_model(path):
 	model = model.to(device)
 	return model.eval()
 
+def load_model_in_cpu(checkpoint_path):
+    checkpoint = torch.load(checkpoint_path, map_location=torch.device('cpu'))
+
+    architecture = checkpoint["arch"]
+    
+    model = Wav2Lip(architecture=architecture)
+    
+    model.load_state_dict(checkpoint["model"])
+    
+    return model
+
 def main():
 	if not os.path.isfile(args.face):
 		raise ValueError('--face argument must be a valid path to video/image file')
@@ -249,7 +260,7 @@ def main():
 	for i, (img_batch, mel_batch, frames, coords) in enumerate(tqdm(gen, 
 											total=int(np.ceil(float(len(mel_chunks))/batch_size)))):
 		if i == 0:
-			model = load_model(args.checkpoint_path)
+			model = load_model_in_cpu(args.checkpoint_path)
 			print ("Model loaded")
 
 			frame_h, frame_w = full_frames[0].shape[:-1]
